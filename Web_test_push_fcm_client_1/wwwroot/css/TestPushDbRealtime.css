@@ -1,0 +1,108 @@
+body {
+    background-color: #f3f2f3;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    text-align: center;
+}
+
+#messages {
+    padding-bottom: 10%;
+    border: 1px solid;
+    margin: 0;
+}
+
+#li_mess {
+    list-style-type: none;
+    margin-top: 2px;
+    margin-bottom: 10px;
+    background-color: #6929ca;
+    padding: 5px;
+    border-radius: 10px;
+    color: white;
+    width: 35%;
+    text-align:left;
+}
+
+li span {
+    font-style: italic;
+    font-weight: bolder;
+    color: #b5b0b9;
+}
+
+#chat {
+    width: 100%;
+    /*margin: auto;*/
+}
+
+#message-form {
+    margin-left: 0;
+    /*text-align: center;*/
+    position: fixed;
+    /*left: 0;*/
+    bottom: 20%;
+    width: 100%;
+    background-color: #b7b5b9;
+}
+
+input {
+    width: 100%;
+    /*height: 30px;*/
+}
+
+button {
+    width: 25%;
+    height: 38px;
+}
+
+.sent {
+    text-align: right;
+    background-color: #a79cb3;
+    margin-left: 58%;
+}
+
+    .sent span {
+        margin-left: 5px;
+        /*color: #6929ca;*/
+    }
+
+#btn_Login {
+    width: 5em;
+}
+
+#btn_logout {
+    width: 5em;
+}
+
+
+#message-btn {
+    /*width: 5em;*/
+    /*width: auto;*/
+    display: inline-block;
+    margin-top: -3px;
+    padding-inline: auto
+}
+
+#sendButtonFw {
+    display: inline-block;
+    margin-top: -3px;
+    height: auto;
+}
+
+.badge {
+    float: right;
+    color: red
+}
+
+.badgeHidden{
+    display:none;
+}
+
+#close {
+    float: right;
+    display: inline-block;
+    padding: 2px 5px;
+    background: #ccc;
+}

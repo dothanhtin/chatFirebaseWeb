@@ -1,0 +1,116 @@
+﻿@page
+@{
+    ViewBag.Title = "Sample";
+    <style>
+        .lbl {
+            font-weight: bold;
+        }
+    </style>
+}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Firebase RealTime Chat</title>
+    <link rel="stylesheet" href="@Url.Content("~/css/TestPushDbRealtime.css")">
+</head>
+<body>
+    <header>
+        <h2 class="text-info">Firebase RealTime Chat</h2>
+    </header>
+    <div class="row">
+        <div class="col-6">
+            <label class="lbl">Login Simolation</label>
+            <br />
+            <button type="button" id="btn_Login" class="btn btn-info btn-rounded waves-effect waves-light">Login</button>
+        </div>
+        <div class="col-6">
+            <label class="lbl">Logout Simolation</label>
+            <br />
+            <button type="button" id="btn_logout" class="btn btn-danger btn-rounded waves-effect waves-light">Logout</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <label class="lbl">Environtment:</label>
+            <br />
+            <select id="sct_Env" class="select-dropdown form-control">
+                <option value="op_local" class="mdb-select md-form">Local</option>
+                <option value="op_dev" class="mdb-select md-form">Dev</option>
+                <option value="op_demo" class="mdb-select md-form">Demo</option>
+                <option value="op_prod" class="mdb-select md-form">Prod</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <label class="lbl">Type module chat:</label>
+            <br />
+            <select id="sct_moduleType" class="select-dropdown form-control">
+                <option value="op_zalo" class="mdb-select md-form">Zalo</option>
+                <option value="op_facebook" class="mdb-select md-form">Facebook</option>
+                @*<option value="op_livechat" class="mdb-select md-form">Livechat</option>*@
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <label class="lbl">Type message send:</label>
+            <br />
+            <select id="sct_typeMessage" class="select-dropdown form-control">
+                <option value="op_text" class="mdb-select md-form">Text</option>
+                @*<option value="op_photo" class="mdb-select md-form">Photo</option>
+                <option value="op_video" class="mdb-select md-form">Video</option>
+                <option value="op_link" class="mdb-select md-form">Link</option>
+                <option value="op_button" class="mdb-select md-form">Button</option>*@
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12" style="display:inline-block">
+            <label class="lbl">Message Forward:</label>
+            </br>
+            <input type="text" id="messageInputFw" class="form-control" style="display:inline-block;width:74%"
+                   placeholder="Send message from Zalo,FB,LiveChat,..." />
+            <button type="button" id="sendButtonFw" style="display:inline-block"
+                    class="btn btn-secondary">
+                Send Forward Message
+            </button>
+        </div>
+    </div>
+    <div class="container" style="padding:0">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="lbl">List Chat</label>
+                </br>
+                <ul id="lst_conn" class="list-group">
+                    @*<li class="list-group-item active">Cras justo odio</li>
+                    <li class="list-group-item">Dapibus ac facilisis in</li>*@
+                </ul>
+            </div>
+            <div class="col-md-8" style="display:inline-block;">
+                <label class="lbl">Chat Window</label>
+                </br>
+                <div id="chat" style="padding:0;">
+                    <!-- messages will display here -->
+                    <ul id="messages" class="modal-content"></ul>
+                    </br>
+                    <!-- form to send message -->
+                        <input id="message-input" type="text" class="form-control" style="width:74%;display:inline-block" placeholder="Type backward message here..." />
+                        <button id="message-btn" type="button" class="btn btn-primary waves-effect waves-light">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-database.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <!--Test push database realtime-->
+    @*<script type="module" src="@Url.Content("~/js/Contents/Models/Classes.js?v=(new Date()).getTime()")"></script>*@
+    <script type="module" src="@Url.Content("~/js/Contents/TestPushDbRealtime.js?v=(new Date()).getTime()")"></script>
+
+</body>
+</html>

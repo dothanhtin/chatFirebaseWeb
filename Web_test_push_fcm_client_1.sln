@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31423.177
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web_test_push_fcm_client_1", "Web_test_push_fcm_client_1\Web_test_push_fcm_client_1.csproj", "{C9931C9F-17FC-4786-B34F-C0769CD5B114}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9931C9F-17FC-4786-B34F-C0769CD5B114}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9931C9F-17FC-4786-B34F-C0769CD5B114}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9931C9F-17FC-4786-B34F-C0769CD5B114}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9931C9F-17FC-4786-B34F-C0769CD5B114}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18E4B7E5-8B99-43AB-9565-82C184F79ABA}
+	EndGlobalSection
+EndGlobal
