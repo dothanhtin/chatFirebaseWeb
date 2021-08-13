@@ -9,9 +9,9 @@ header {
 }
 
 #messages {
-    padding-bottom: 10%;
+    padding-bottom: 20%;
     border: 1px solid;
-    margin: 0;
+    /*margin: 0;*/
 }
 
 #li_mess {

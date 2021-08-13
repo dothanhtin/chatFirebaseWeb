@@ -16,7 +16,7 @@ const devLink = "https://orimx-dev.vdc2.com.vn/kong";
 //const localLink = "http://localhost:55567";
 const localLink = "http://localhost:55567"; //change with local test
 
-const testPushLink = "https://localhost:5001/";
+//const testPushLink = "https://localhost:5001/";
 //#endregion
 
 //#region user login
@@ -225,15 +225,15 @@ $('#message-btn').click(function () {
     }
     $.ajax({
         type: "POST",
-        url: testPushLink + 'api/TestPushNotification/SendMessageBackward',
+        url: getLink() + '/api/core/v1/chat/SendMessageBackward',
         data: JSON.stringify(sendObj),
         dataType: "json",
         contentType: "application/json;charset=utf-8",
         success: function (data) {
-            let username = chooseUser.userName;
+            let name = chooseUser.userName;
             if (data == 1) {
                 let message = `<li id="li_mess" class=${"sent"
-                    }><span>${username}: </span>${$('#message-input').val()}</li>`;
+                    }><span>${name}: </span>${$('#message-input').val()}</li>`;
                 // append the message on the page
                 $('#messages').append(message);
             }
@@ -274,7 +274,7 @@ $(document).on('click', '.list-group-item', function () {
         //#region fetch chat
         let timestamp = Date.now();
         let message = $('#message-input').val();
-        let username = chooseUser.userName;
+        let username = chooseUser.username;
         $('#message-input').val(''); //blank input message
         //set active
         $('.list-group-item').not(this).removeClass('list-group-item active').addClass('list-group-item')
@@ -300,12 +300,12 @@ $(document).on('click', '.list-group-item', function () {
             //console.log(snapshot.key);
             //console.log(snapshot.val());
             let messages = snapshot.val();
-            let message = `<li id="li_mess" class=${username === messages.supportername ? "sent" : "receive"
-                }><span>${(typeof (messages.username) !== "undefined" && messages.username != null) ? messages.username : messages.supportername}: </span>${messages.message}</li>`;
+            let message = `<li id="li_mess" class=${username === messages.username ? "sent" : "receive"
+                }><span>${username === messages.username ? chooseUser.name : messages.username}: </span>${messages.message}</li>`;
             // append the message on the page
             $('#messages').append(message);
         });
-        getLogMessageBySupporter(onThisObj.appid, onThisObj.uid, chooseUser.userId, 50, 0);
+        getLogMessageBySupporter(onThisObj.typeChat, onThisObj.appid, onThisObj.uid, chooseUser.userId, 50, 0);
         previousGetMessageFromConnection = messageRoute;
         //#endregion
     }
@@ -382,7 +382,7 @@ function clearAllStatusWhenLogout() {
     dictConnections = new Map();
 }
 
-function getLogMessageBySupporter(appid, uid, supporterid, limit, offset) {
+function getLogMessageBySupporter(apptype, appid, uid, supporterid, limit, offset) {
     var object = {
         appid: appid,
         uid: uid,
@@ -390,31 +390,67 @@ function getLogMessageBySupporter(appid, uid, supporterid, limit, offset) {
         limit: limit,
         offset: offset
     };
-    $.ajax({
-        type: "POST",
-        //url: testPushLink + 'api/fb/v1/getDialog',
-        url: 'https://orimx.vnptit.vn/kong/api/fb/v1/getDialog',
-        data: JSON.stringify(object),
-        dataType: "json",
-        contentType: "application/json;charset=utf-8",
-        success: function (data) {
-            let username = chooseUser.userName;
-            if (data.returnCode == 0) {
-                $.each(data.returnData, function (index, value) {
-                    let message = `<li id="li_mess" class=${username === value.username ? "sent" : "receive"
-                        }><span>${(typeof (value.username) !== "undefined" && value.username != null) ? value.username : value.supportername}: </span>${value.message}</li>`;
-                    // append the message on the page
-                    $('#messages').append(message);
-                });
-            }
-            else {
-                alert("Get log error!");
-            }
-        },
-        error: function (response) {
-            alert(response);
-        }
-    });
+    switch (apptype) {
+        case zalo:
+            $.ajax({
+                type: "POST",
+                //url: testPushLink + 'api/fb/v1/getDialog',
+                url: 'https://orimx.vnptit.vn/kong/api/zalo/v2/getDialog',
+                headers: {
+                    "Authorization": "Basic " + "c21zdXNlcjpBUEkxMEBVc2VyITIy"
+                },
+                data: JSON.stringify(object),
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (data) {
+                    if (data.returnCode == 0) {
+                        $.each(data.returnData, function (index, value) {
+                            let message = `<li id="li_mess" class=${value.messagetype == "MT" ? "sent" : "receive"
+                                }><span>${value.messagetype == "MT" ? value.supportername : value.username}: </span>${value.message}</li>`;
+                            // append the message on the page
+                            $('#messages').append(message);
+                        });
+                    }
+                    else {
+                        alert("Get log error!");
+                    }
+                },
+                error: function (response) {
+                    alert(response);
+                }
+            });
+            break;
+        case facebook:
+            $.ajax({
+                type: "POST",
+                //url: testPushLink + 'api/fb/v1/getDialog',
+                url: 'https://orimx.vnptit.vn/kong/api/fb/v1/getDialog',
+                data: JSON.stringify(object),
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (data) {
+                    let username = chooseUser.userName;
+                    if (data.returnCode == 0) {
+                        $.each(data.returnData, function (index, value) {
+                            let message = `<li id="li_mess" class=${value.messagetype == "MT" ? "sent" : "receive"
+                                }><span>${value.messagetype == "MT" ? value.supportername : value.username}: </span>${value.message}</li>`;
+                            // append the message on the page
+                            $('#messages').append(message);
+                        });
+                    }
+                    else {
+                        alert("Get log error!");
+                    }
+                },
+                error: function (response) {
+                    alert(response);
+                }
+            });
+            break;
+        default:
+            //Hùng bổ sung call Live chat như tài liệu nhé
+            break;
+    }
 }
 
 //clear temp connection
@@ -439,5 +475,19 @@ function clearAllTempConnectionWhenLogout(tempCons) {
     });
     tempCons = [];
     return;
+}
+
+function getLink() {
+    var optLink = $('#sct_Env').val();
+    switch (optLink) {
+        case "op_dev":
+            return devLink;
+        case "op_demo":
+            return demoLink;
+        case "op_prod":
+            return prodLink;
+        default:
+            return localLink;
+    }
 }
 //#endregion
