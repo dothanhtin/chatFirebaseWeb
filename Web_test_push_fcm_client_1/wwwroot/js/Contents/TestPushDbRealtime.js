@@ -168,14 +168,36 @@ if (usercode === "1") {
 }
 else {
     chooseUser = user5;
-    connectionWithUserId = _formatRouteConnection + chooseUser.userId;
+    connectionWithUserId = _formatRouteConnection + chooseUser.userId + "/";
     let fetchConnection = db.ref(connectionWithUserId);
 
     fetchConnection.on("child_added", function (snapshot) {
         //console.log(snapshot);
+        //console.log(snapshot.val());
         let item = snapshot.val();
-        let eli = `<li class="list-group-item">${item.username}</li>`
+        //check exist in list
+        var check = dictConnections.get(item.connectionId);
+        if (typeof (check) === "undefined" || check == null) {
+            dictConnections.set(item.connectionId, item);
+        }
+        else
+            $(`#${item.connectionId}`).remove();
+        let eli = `<li id=${item.connectionId} class="list-group-item"
+                    style="background-image: url('${item.avatar}');background-repeat: no-repeat;background-size: contain;text-align:center">
+                    ${item.username}(${item.typeChat})<span class=${item.badge > 0 ? "badge" : "badgeHidden"} style="float: right;color:red">${item.badge}</span>
+                    <span id='close'>x</span></li>`;
         $('#lst_conn').append(eli);
+    });
+
+    //fetch tempConnection
+    let fetchTempConnection = db.ref(`${_formatRouteLogin}${chooseUser.userId}/${_prefixTempConnectionWithUserLogin}`)
+    fetchTempConnection.on("child_added", function (snapshot) {
+        let item = snapshot.key;
+        if (typeof (item) !== "undefined" && item !== null) {
+            if (typeof dictTempConnections[item] === 'undefined') {
+                dictTempConnections.push(item);
+            }
+        }
     });
 }
 
@@ -341,6 +363,15 @@ $(document).on('click', '#close', function () {
         $('#messages').empty();
     }
     return;
+});
+//#endregion
+
+//#region browser on or off
+$(window).bind("beforeunload", function () {
+    clearAllStatusWhenLogout();
+    clearAllTempConnectionWhenLogout(dictTempConnections);
+    let user = db.ref(_formatRouteLogin + chooseUser.userId);
+    user.remove();
 });
 //#endregion
 
