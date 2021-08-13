@@ -49,7 +49,8 @@ const _formatRouteMessage = "chat/messages/";       // route thực là "chat/me
 const _formatRouteConnection = "chat/connection/";  // route thực là "chat/connection/userId
 const _formatRouteLogin = "chat/login/";            // route thực là "chat/login/userId
 const _formatRouteTemporaryConnection = "chat/tempconnection/";
-const _prefixTempConnectionWithUserLogin = "tempconnetion";
+const _prefixTempConnectionWithUserLogin = "tempconnection";
+const _prefixInfoWithUserLogin = "info";
 //#endregion
 
 //#region config of Firebase
@@ -155,11 +156,13 @@ if (usercode === "1") {
     });
 
     //fetch tempConnection
-    let fetchTempConnection = db.ref(`${_formatRouteLogin}${chooseUser.userId}/${_prefixTempConnectionWithUserLogin}/`)
+    let fetchTempConnection = db.ref(`${_formatRouteLogin}${chooseUser.userId}/${_prefixTempConnectionWithUserLogin}`)
     fetchTempConnection.on("child_added", function (snapshot) {
-        let item = snapshot.val();
-        if (typeof dictTempConnections[item] === 'undefined') {
-            dictTempConnections.push(snapshot.val());
+        let item = snapshot.key;
+        if (typeof (item) !== "undefined" && item !== null) {
+            if (typeof dictTempConnections[item] === 'undefined') {
+                dictTempConnections.push(item);
+            }
         }
     });
 }
@@ -181,14 +184,14 @@ else {
 //Button login
 $('#btn_Login').click(function () {
     if (typeof (chooseUser) !== "undefined" && chooseUser !== null) {
-        db.ref(_formatRouteLogin + chooseUser.userId).set(chooseUser);
+        db.ref(`${_formatRouteLogin}${chooseUser.userId}/${_prefixInfoWithUserLogin}`).set(chooseUser);
     }
 });
 //#endregion
 //Button logout
 $('#btn_logout').click(function () {
     clearAllStatusWhenLogout();
-    clearAllTempConnectionWhenLogout(dictConnections);
+    clearAllTempConnectionWhenLogout(dictTempConnections);
     let user = db.ref(_formatRouteLogin + chooseUser.userId);
     user.remove();
 });
@@ -416,17 +419,24 @@ function getLogMessageBySupporter(appid, uid, supporterid, limit, offset) {
 
 //clear temp connection
 function clearOneTempConnection(tempConnection) {
-    if (typeof dictTempConnections[tempConnection] !== 'undefined') {
+    if (typeof (dictTempConnections.find(x => x === tempConnection)) !== 'undefined' && dictTempConnections.find(x => x === tempConnection) !== null) {
         var routeTempConnection = `${_formatRouteTemporaryConnection}/${tempConnection}`;
         let fetchTempConnection = db.ref(routeTempConnection);
         fetchTempConnection.remove();
         var routeTempUserConnection = `${_formatRouteLogin}${chooseUser.userId}/${_prefixTempConnectionWithUserLogin}/${tempConnection}`;
+        let fetchTempUserConnection = db.ref(routeTempUserConnection);
+        fetchTempUserConnection.remove();
         var index = dictTempConnections.indexOf(tempConnection);
         dictTempConnections.splice(index, 1);
     }
     return;
 }
 function clearAllTempConnectionWhenLogout(tempCons) {
+    $.each(tempCons, function (index, value) {
+        var routeTempConnection = `${_formatRouteTemporaryConnection}/${value}`;
+        let fetchTempConnection = db.ref(routeTempConnection);
+        fetchTempConnection.remove();
+    });
     tempCons = [];
     return;
 }
