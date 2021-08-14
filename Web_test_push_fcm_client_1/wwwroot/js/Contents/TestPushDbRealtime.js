@@ -366,7 +366,7 @@ $(document).on('click', '#close', function () {
 });
 //#endregion
 
-//#region browser on or off
+//#region browser off
 $(window).bind("beforeunload", function () {
     clearAllStatusWhenLogout();
     clearAllTempConnectionWhenLogout(dictTempConnections);
