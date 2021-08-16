@@ -12,7 +12,7 @@ export default class User {
 
 export class MessageBackward {
     constructor(
-        appType, typeMessage, appid, uid, supporterid, supportername, message,
+        appType, typeMessage, appid, uid, supporterid, supportername, message, configNumber,
         imageUrl = '', imageTitle = '', imageDes = '', videoUrl = '', videoTitle = '',
         videoDes = '', videoThumb = '', linkUrl = '', linkTitle = '', linkDes = '',
         linkThumb = '', buttons = []
@@ -24,6 +24,7 @@ export class MessageBackward {
         this.supporterid = supporterid;
         this.supportername = supportername;
         this.message = message;
+        this.configNumber = configNumber;
         this.imageUrl = imageUrl;
         this.imageTitle = imageTitle;
         this.imageDes = imageDes;

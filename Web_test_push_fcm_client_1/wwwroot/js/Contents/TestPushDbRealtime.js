@@ -215,7 +215,7 @@ $('#btn_Login').click(function () {
 $('#btn_logout').click(function () {
     clearAllStatusWhenLogout();
     clearAllTempConnectionWhenLogout(dictTempConnections);
-    clearBusyCallCenter(chooseUser.configNumber);
+    clearBusyCallCenter(chooseUser.configNumber, null);
     let user = db.ref(_formatRouteLogin + chooseUser.userId);
     user.remove();
 });
@@ -239,8 +239,9 @@ $('#message-btn').click(function () {
             onThisObj.appid,
             onThisObj.uid,
             chooseUser.userId,
-            chooseUser.userName,
-            $('#message-input').val()
+            chooseUser.name,
+            $('#message-input').val(),
+            chooseUser.configNumber
         );
     }
     else {
@@ -261,8 +262,11 @@ $('#message-btn').click(function () {
                 // append the message on the page
                 $('#messages').append(message);
             }
+            else if (data == 2) {
+                alert("Không thể gửi tin nhắn được. Người dùng đang được tổng đài viên khác phục vụ!");
+            }
             else {
-                alert("send message failed!");
+                alert(data);
             }
         },
         error: function (response) {
@@ -373,7 +377,7 @@ $(document).on('click', '#close', function () {
 $(window).bind("beforeunload", function () {
     clearAllStatusWhenLogout();
     clearAllTempConnectionWhenLogout(dictTempConnections);
-    clearBusyCallCenter(chooseUser.configNumber);
+    clearBusyCallCenter(chooseUser.configNumber, null);
     let user = db.ref(_formatRouteLogin + chooseUser.userId);
     user.remove();
 });
