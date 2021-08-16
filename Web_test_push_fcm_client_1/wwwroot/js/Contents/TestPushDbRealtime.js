@@ -51,6 +51,7 @@ const _formatRouteLogin = "chat/login/";            // route thực là "chat/lo
 const _formatRouteTemporaryConnection = "chat/tempconnection/";
 const _prefixTempConnectionWithUserLogin = "tempconnection";
 const _prefixInfoWithUserLogin = "info";
+const _prefixCallCenterBusy = "callCenterBusy";
 //#endregion
 
 //#region config of Firebase
@@ -214,6 +215,7 @@ $('#btn_Login').click(function () {
 $('#btn_logout').click(function () {
     clearAllStatusWhenLogout();
     clearAllTempConnectionWhenLogout(dictTempConnections);
+    clearBusyCallCenter(chooseUser.configNumber);
     let user = db.ref(_formatRouteLogin + chooseUser.userId);
     user.remove();
 });
@@ -339,6 +341,7 @@ $(document).on('click', '#close', function () {
     //todo
     let item = dictConnections.get(connId);
     clearOneTempConnection(`${item.uid}_${item.appid}`);
+    clearBusyCallCenter(chooseUser.configNumber, `${item.uid}_${item.appid}`);
     dictConnections.delete(connId);
     if (typeof (connId) !== "undefined" && connId !== null) {
         //delete connection
@@ -370,6 +373,7 @@ $(document).on('click', '#close', function () {
 $(window).bind("beforeunload", function () {
     clearAllStatusWhenLogout();
     clearAllTempConnectionWhenLogout(dictTempConnections);
+    clearBusyCallCenter(chooseUser.configNumber);
     let user = db.ref(_formatRouteLogin + chooseUser.userId);
     user.remove();
 });
@@ -506,6 +510,15 @@ function clearAllTempConnectionWhenLogout(tempCons) {
     });
     tempCons = [];
     return;
+}
+
+function clearBusyCallCenter(configNumber, uid_appid) {
+    let fetchBusyCallCenter;
+    if (typeof (uid_appid) !== "undefined" && uid_appid !== null)
+        fetchBusyCallCenter = db.ref(`${_formatRouteLogin}${_prefixCallCenterBusy}/${configNumber}/${uid_appid}`);
+    else
+        fetchBusyCallCenter = db.ref(`${_formatRouteLogin}${_prefixCallCenterBusy}/${configNumber}/`);
+    fetchBusyCallCenter.remove();
 }
 
 function getLink() {
