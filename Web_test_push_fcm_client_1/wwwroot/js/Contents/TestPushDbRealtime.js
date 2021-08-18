@@ -135,6 +135,7 @@ var dictTempConnections = [];
 let usercode = prompt("Please Tell Us Your Code");
 if (usercode === "1") {
     chooseUser = user1;
+    login();
     connectionWithUserId = _formatRouteConnection + chooseUser.userId + "/";
     let fetchConnection = db.ref(connectionWithUserId);
 
@@ -169,6 +170,7 @@ if (usercode === "1") {
 }
 else {
     chooseUser = user5;
+    login();
     connectionWithUserId = _formatRouteConnection + chooseUser.userId + "/";
     let fetchConnection = db.ref(connectionWithUserId);
 
@@ -255,7 +257,7 @@ $('#message-btn').click(function () {
         dataType: "json",
         contentType: "application/json;charset=utf-8",
         success: function (data) {
-            let name = chooseUser.userName;
+            let name = chooseUser.name;
             if (data == 1) {
                 let message = `<li id="li_mess" class=${"sent"
                     }><span>${name}: </span>${$('#message-input').val()}</li>`;
@@ -334,6 +336,7 @@ $(document).on('click', '.list-group-item', function () {
             $('#messages').append(message);
         });
         getLogMessageBySupporter(onThisObj.typeChat, onThisObj.appid, onThisObj.uid, chooseUser.userId, 50, 0);
+        //getLogMessageBySupporter(onThisObj.typeChat, onThisObj.appid, onThisObj.uid, chooseUser.configNumber, 50, 0);
         previousGetMessageFromConnection = messageRoute;
         //#endregion
     }
@@ -536,6 +539,12 @@ function getLink() {
             return prodLink;
         default:
             return localLink;
+    }
+}
+
+function login() {
+    if (typeof (chooseUser) !== "undefined" && chooseUser !== null) {
+        db.ref(`${_formatRouteLogin}${chooseUser.userId}/${_prefixInfoWithUserLogin}`).set(chooseUser);
     }
 }
 //#endregion
