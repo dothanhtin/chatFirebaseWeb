@@ -446,12 +446,19 @@ function getLogMessageBySupporter(apptype, appid, uid, supporterid, limit, offse
                 contentType: "application/json;charset=utf-8",
                 success: function (data) {
                     if (data.returnCode == 0) {
-                        $.each(data.returnData, function (index, value) {
-                            let message = `<li id="li_mess" class=${value.messagetype == "MT" ? "sent" : "receive"
-                                }><span>${value.messagetype == "MT" ? value.supportername : value.username}: </span>${value.message}</li>`;
+                        //$.each(data.returnData, function (index, value) {
+                        //    let message = `<li id="li_mess" class=${value.messagetype == "MT" ? "sent" : "receive"
+                        //        }><span>${value.messagetype == "MT" ? value.supportername : value.username}: </span>${value.message}</li>`;
+                        //    // append the message on the page
+                        //    $('#messages').append(message);
+                        //});
+                        var array = data.returnData;
+                        for (let index = array.length - 1; index >= 0; index--) {
+                            let message = `<li id="li_mess" class=${array[index].messagetype == "MT" ? "sent" : "receive"
+                                }><span>${array[index].messagetype == "MT" ? array[index].supportername : array[index].username}: </span>${array[index].message}</li>`;
                             // append the message on the page
                             $('#messages').append(message);
-                        });
+                        };
                     }
                     else {
                         alert("Get log error!");
@@ -473,12 +480,19 @@ function getLogMessageBySupporter(apptype, appid, uid, supporterid, limit, offse
                 success: function (data) {
                     let username = chooseUser.userName;
                     if (data.returnCode == 0) {
-                        $.each(data.returnData, function (index, value) {
-                            let message = `<li id="li_mess" class=${value.messagetype == "MT" ? "sent" : "receive"
-                                }><span>${value.messagetype == "MT" ? value.supportername : value.username}: </span>${value.message}</li>`;
+                        //$.each(data.returnData, function (index, value) {
+                        //    let message = `<li id="li_mess" class=${value.messagetype == "MT" ? "sent" : "receive"
+                        //        }><span>${value.messagetype == "MT" ? value.supportername : value.username}: </span>${value.message}</li>`;
+                        //    // append the message on the page
+                        //    $('#messages').append(message);
+                        //});
+                        var array = data.returnData;
+                        for (let index = array.length - 1; index >= 0; index--) {
+                            let message = `<li id="li_mess" class=${array[index].messagetype == "MT" ? "sent" : "receive"
+                                }><span>${array[index].messagetype == "MT" ? array[index].supportername : array[index].username}: </span>${array[index].message}</li>`;
                             // append the message on the page
                             $('#messages').append(message);
-                        });
+                        };
                     }
                     else {
                         alert("Get log error!");
