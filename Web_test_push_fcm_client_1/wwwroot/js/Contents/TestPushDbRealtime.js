@@ -41,7 +41,14 @@ let user5 = new User
         0,
         "Cán bộ tổng đài 5"
     );
-
+let user10 = new User(
+    "00eabf39-ac19-4ac6-aafa-ab0407d30647",
+    "tongdai_222.hcm",
+    "8d22727e-2fa8-4627-84c5-e2b36bca5d28",
+    "Local/222@agents/n",
+    0,
+    "tongdai_222.hcm"
+);
 //#endregion
 
 //#region format node
@@ -135,6 +142,41 @@ var dictTempConnections = [];
 let usercode = prompt("Please Tell Us Your Code");
 if (usercode === "1") {
     chooseUser = user1;
+    login();
+    connectionWithUserId = _formatRouteConnection + chooseUser.userId + "/";
+    let fetchConnection = db.ref(connectionWithUserId);
+
+    fetchConnection.on("child_added", function (snapshot) {
+        //console.log(snapshot);
+        //console.log(snapshot.val());
+        let item = snapshot.val();
+        //check exist in list
+        var check = dictConnections.get(item.connectionId);
+        if (typeof (check) === "undefined" || check == null) {
+            dictConnections.set(item.connectionId, item);
+        }
+        else
+            $(`#${item.connectionId}`).remove();
+        let eli = `<li id=${item.connectionId} class="list-group-item"
+                    style="background-image: url('${item.avatar}');background-repeat: no-repeat;background-size: contain;text-align:center">
+                    ${item.username}(${item.typeChat})<span class=${item.badge > 0 ? "badge" : "badgeHidden"} style="float: right;color:red">${item.badge}</span>
+                    <span id='close'>x</span></li>`;
+        $('#lst_conn').append(eli);
+    });
+
+    //fetch tempConnection
+    let fetchTempConnection = db.ref(`${_formatRouteLogin}${chooseUser.userId}/${_prefixTempConnectionWithUserLogin}`)
+    fetchTempConnection.on("child_added", function (snapshot) {
+        let item = snapshot.key;
+        if (typeof (item) !== "undefined" && item !== null) {
+            if (typeof dictTempConnections[item] === 'undefined') {
+                dictTempConnections.push(item);
+            }
+        }
+    });
+}
+else if (usercode === "10") {
+    chooseUser = user10;
     login();
     connectionWithUserId = _formatRouteConnection + chooseUser.userId + "/";
     let fetchConnection = db.ref(connectionWithUserId);
