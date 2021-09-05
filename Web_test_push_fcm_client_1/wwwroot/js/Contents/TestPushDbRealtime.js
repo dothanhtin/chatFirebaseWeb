@@ -366,18 +366,20 @@ $(document).on('click', '.list-group-item', function () {
                 oldFetchChat.off("child_added");
             }
         }
+        let listSnapshot = [];
         // check for new messages using the onChildAdded event listener
         fetchChat.on("child_added", function (snapshot) {
             //console.log(snapshot);
             //console.log(snapshot.key);
             //console.log(snapshot.val());
             let messages = snapshot.val();
-            let message = `<li id="li_mess" class=${username === messages.username ? "sent" : "receive"
-                }><span>${username === messages.username ? chooseUser.name : messages.username}: </span>${messages.message}</li>`;
-            // append the message on the page
-            $('#messages').append(message);
+            //let message = `<li id="li_mess" class=${username === messages.username ? "sent" : "receive"
+            //    }><span>${username === messages.username ? chooseUser.name : messages.username}: </span>${messages.message}</li>`;
+            //// append the message on the page
+            //$('#messages').append(message);
+            listSnapshot.push(messages);
         });
-        getLogMessageBySupporter(onThisObj.typeChat, onThisObj.appid, onThisObj.uid, chooseUser.userId, 50, 0);
+        getLogMessageBySupporter(onThisObj.typeChat, onThisObj.appid, onThisObj.uid, chooseUser.userId, 50, 0, listSnapshot);
         //getLogMessageBySupporter(onThisObj.typeChat, onThisObj.appid, onThisObj.uid, chooseUser.configNumber, 50, 0);
         previousGetMessageFromConnection = messageRoute;
         //#endregion
@@ -466,7 +468,7 @@ function clearAllStatusWhenLogout() {
     dictConnections = new Map();
 }
 
-function getLogMessageBySupporter(apptype, appid, uid, supporterid, limit, offset) {
+function getLogMessageBySupporter(apptype, appid, uid, supporterid, limit, offset, listSnapshot) {
     var object = {
         appid: appid,
         uid: uid,
@@ -501,6 +503,15 @@ function getLogMessageBySupporter(apptype, appid, uid, supporterid, limit, offse
                             // append the message on the page
                             $('#messages').append(message);
                         };
+                        let name = chooseUser.name;
+                        if (listSnapshot.length > 0) {
+                            $.each(listSnapshot, function (index, value) {
+                                let message = `<li id="li_mess" class=${name === value.username ? "sent" : "receive"
+                                    }><span>${name === value.username ? chooseUser.name : value.username}: </span>${value.message}</li>`;
+                                // append the message on the page
+                                $('#messages').append(message);
+                            });
+                        }
                     }
                     else {
                         alert("Get log error!");
