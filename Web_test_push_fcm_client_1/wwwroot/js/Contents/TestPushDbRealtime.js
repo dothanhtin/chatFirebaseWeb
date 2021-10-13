@@ -59,6 +59,8 @@ const _formatRouteTemporaryConnection = "chat/tempconnection/";
 const _prefixTempConnectionWithUserLogin = "tempconnection";
 const _prefixInfoWithUserLogin = "info";
 const _prefixCallCenterBusy = "callCenterBusy";
+
+const _prefixCallInfo = "call";
 //#endregion
 
 //#region config of Firebase
@@ -174,6 +176,8 @@ if (usercode === "1") {
             }
         }
     });
+    //fetch busy call center
+    initFetchCallCenterInfo(chooseUser.configNumber);
 }
 else if (usercode === "10") {
     chooseUser = user10;
@@ -209,6 +213,8 @@ else if (usercode === "10") {
             }
         }
     });
+    //fetch busy call center
+    initFetchCallCenterInfo(chooseUser.configNumber);
 }
 else {
     chooseUser = user5;
@@ -244,6 +250,8 @@ else {
             }
         }
     });
+    //fetch busy call center
+    initFetchCallCenterInfo(chooseUser.configNumber);
 }
 
 
@@ -260,6 +268,7 @@ $('#btn_logout').click(function () {
     clearAllStatusWhenLogout();
     clearAllTempConnectionWhenLogout(dictTempConnections);
     clearBusyCallCenter(chooseUser.configNumber, null);
+    closeActiveCalling(chooseUser.configNumber);
     let user = db.ref(_formatRouteLogin + chooseUser.userId);
     user.remove();
 });
@@ -425,6 +434,7 @@ $(window).bind("beforeunload", function () {
     clearAllStatusWhenLogout();
     clearAllTempConnectionWhenLogout(dictTempConnections);
     clearBusyCallCenter(chooseUser.configNumber, null);
+    closeActiveCalling(chooseUser.configNumber);
     let user = db.ref(_formatRouteLogin + chooseUser.userId);
     user.remove();
 });
@@ -611,7 +621,34 @@ function getLink() {
 
 function login() {
     if (typeof (chooseUser) !== "undefined" && chooseUser !== null) {
+        //Chat info login
         db.ref(`${_formatRouteLogin}${chooseUser.userId}/${_prefixInfoWithUserLogin}`).set(chooseUser);
     }
+}
+
+function initFetchCallCenterInfo(agent) {
+    let routeCallInfo = `${_formatRouteLogin}${_prefixCallCenterBusy}/${agent}/${_prefixCallInfo}/`;
+    let fetchCallCenter = db.ref(routeCallInfo);
+    fetchCallCenter.on("child_added", function (snapshot) {
+        let item = snapshot.val();
+        if (typeof (item) !== "undefined" && item !== null) {
+            //console.log(item);
+            let info = item.callerid + " is calling...";
+            var result = confirm(info);
+            if (result) {
+                // the user clicked ok
+                closeActiveCalling(agent);
+            } else {
+                // the user clicked cancel or closed the confirm dialog.
+                closeActiveCalling(agent);
+            }
+        }
+    });
+}
+
+function closeActiveCalling(agent) {
+    let routeCallInfo = `${_formatRouteLogin}${_prefixCallCenterBusy}/${agent}/${_prefixCallInfo}/`;
+    let fetchCallCenter = db.ref(routeCallInfo);
+    fetchCallCenter.remove();
 }
 //#endregion
