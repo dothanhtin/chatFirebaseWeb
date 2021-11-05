@@ -61,6 +61,11 @@ const _prefixInfoWithUserLogin = "info";
 const _prefixCallCenterBusy = "callCenterBusy";
 
 const _prefixCallInfo = "call";
+
+const _formatRouteNotification = "notification/";
+const _prefixListenNotification = "listen";
+const _prefixActionNotification = "action";
+const _prefixStatusNotification = "active";
 //#endregion
 
 //#region config of Firebase
@@ -178,6 +183,8 @@ if (usercode === "1") {
     });
     //fetch busy call center
     initFetchCallCenterInfo(chooseUser.configNumber);
+    //fetch listen notification
+    initListenNotification(chooseUser.departmentId, chooseUser.userId);
 }
 else if (usercode === "10") {
     chooseUser = user10;
@@ -215,6 +222,8 @@ else if (usercode === "10") {
     });
     //fetch busy call center
     initFetchCallCenterInfo(chooseUser.configNumber);
+    //fetch listen notification
+    initListenNotification(chooseUser.departmentId, chooseUser.userId);
 }
 else {
     chooseUser = user5;
@@ -252,6 +261,8 @@ else {
     });
     //fetch busy call center
     initFetchCallCenterInfo(chooseUser.configNumber);
+    //fetch listen notification
+    initListenNotification(chooseUser.departmentId, chooseUser.userId);
 }
 
 
@@ -269,6 +280,7 @@ $('#btn_logout').click(function () {
     clearAllTempConnectionWhenLogout(dictTempConnections);
     clearBusyCallCenter(chooseUser.configNumber, null);
     closeActiveCalling(chooseUser.configNumber);
+    clearListenNotification(chooseUser.departmentId, chooseUser.userId);
     let user = db.ref(_formatRouteLogin + chooseUser.userId);
     user.remove();
 });
@@ -435,6 +447,7 @@ $(window).bind("beforeunload", function () {
     clearAllTempConnectionWhenLogout(dictTempConnections);
     clearBusyCallCenter(chooseUser.configNumber, null);
     closeActiveCalling(chooseUser.configNumber);
+    clearListenNotification(chooseUser.departmentId, chooseUser.userId);
     let user = db.ref(_formatRouteLogin + chooseUser.userId);
     user.remove();
 });
@@ -651,4 +664,47 @@ function closeActiveCalling(agent) {
     let fetchCallCenter = db.ref(routeCallInfo);
     fetchCallCenter.remove();
 }
+
+//notification
+function initListenNotification(departmentId, officerId) {
+    let defaultValue = { statuscode: 0, statusname: "active" };
+    let routeStatusNotification = `${_formatRouteNotification}${departmentId}/${_prefixStatusNotification}/${officerId}/`;
+    db.ref(`${routeStatusNotification}`).set(defaultValue);
+    let routeListenNotification = `${_formatRouteNotification}${departmentId}/${officerId}/`;
+    ListenNotification(routeListenNotification);
+}
+function ListenNotification(routeListenNotification) {
+    //use with department
+    let fetchListenNotification = db.ref(routeListenNotification);
+    fetchListenNotification.on("child_added", function (snapshot) {
+        let item = snapshot.val();
+        console.log(item);
+        if (typeof (item) !== "undefined" && item !== null) {
+            let info = "Notification action name: " + item.actionname;
+            var result = confirm(info);
+        }
+    });
+    //use with direct officer
+    let routeListenNotificationWithOfficer = `${_formatRouteNotification}${officerId}`;
+    let fetchListenNotificationWithOfficer = db.ref(routeListenNotificationWithOfficer);
+    fetchListenNotificationWithOfficer.on("child_added", function (snapshot) {
+        let item = snapshot.val();
+        console.log(item);
+        if (typeof (item) !== "undefined" && item !== null) {
+            let info = "Notification action name: " + item.actionname;
+            var result = confirm(info);
+        }
+    });
+}
+
+function clearListenNotification(departmentId, officerId) {
+    let routeListenNotification = `${_formatRouteNotification}${departmentId}/${officerId}`;
+    let fetchListenNotification = db.ref(routeListenNotification);
+    fetchListenNotification.remove();
+    let routeStatusNotification = `${_formatRouteNotification}${departmentId}/${_prefixStatusNotification}/${officerId}/`;
+    let fetchStatusNotification = db.ref(routeStatusNotification);
+    fetchStatusNotification.remove();
+}
+//------------------------------
+
 //#endregion
