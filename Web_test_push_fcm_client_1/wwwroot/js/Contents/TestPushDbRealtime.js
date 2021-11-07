@@ -49,6 +49,16 @@ let user10 = new User(
     0,
     "tongdai_222.hcm"
 );
+
+let officerCanGioTest = new User(
+    "d1ad9d95-45cd-4e31-ae55-f356bb947ed2",
+    "ql.longhoatest",
+    "3114f6d8-18c4-49e8-81ea-f34856482b3e",
+    null,
+    0,
+    "Quản lý Long Hòa Test"
+)
+
 //#endregion
 
 //#region format node
@@ -222,6 +232,11 @@ else if (usercode === "10") {
     });
     //fetch busy call center
     initFetchCallCenterInfo(chooseUser.configNumber);
+    //fetch listen notification
+    initListenNotification(chooseUser.departmentId, chooseUser.userId);
+}
+else if (usercode === "20") {
+    chooseUser = officerCanGioTest;
     //fetch listen notification
     initListenNotification(chooseUser.departmentId, chooseUser.userId);
 }
@@ -671,9 +686,9 @@ function initListenNotification(departmentId, officerId) {
     let routeStatusNotification = `${_formatRouteNotification}${departmentId}/${_prefixStatusNotification}/${officerId}/`;
     db.ref(`${routeStatusNotification}`).set(defaultValue);
     let routeListenNotification = `${_formatRouteNotification}${departmentId}/${officerId}/`;
-    ListenNotification(routeListenNotification);
+    ListenNotification(routeListenNotification, officerId);
 }
-function ListenNotification(routeListenNotification) {
+function ListenNotification(routeListenNotification, officerId) {
     //use with department
     let fetchListenNotification = db.ref(routeListenNotification);
     fetchListenNotification.on("child_added", function (snapshot) {
