@@ -695,7 +695,7 @@ function ListenNotification(routeListenNotification, officerId) {
         let item = snapshot.val();
         console.log(item);
         if (typeof (item) !== "undefined" && item !== null) {
-            let info = "Notification action name: " + item.actionname;
+            let info = "Notification action name: " + item.message;
             var result = confirm(info);
         }
     });
@@ -706,7 +706,7 @@ function ListenNotification(routeListenNotification, officerId) {
         let item = snapshot.val();
         console.log(item);
         if (typeof (item) !== "undefined" && item !== null) {
-            let info = "Notification action name: " + item.actionname;
+            let info = "Notification action name: " + item.message;
             var result = confirm(info);
         }
     });
