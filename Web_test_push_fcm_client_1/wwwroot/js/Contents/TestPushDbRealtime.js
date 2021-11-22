@@ -62,6 +62,7 @@ let officerCanGioTest = new User(
 //#endregion
 
 //#region format node
+//chat
 const _formatRouteMessage = "chat/messages/";       // route thực là "chat/messages/ten_ketnoi/userId  (Tên kết nối gồn Zalo_Uid_UserId) // Uid là id của người gửi từ app tới
 const _formatRouteConnection = "chat/connection/";  // route thực là "chat/connection/userId
 const _formatRouteLogin = "chat/login/";            // route thực là "chat/login/userId
@@ -70,8 +71,20 @@ const _prefixTempConnectionWithUserLogin = "tempconnection";
 const _prefixInfoWithUserLogin = "info";
 const _prefixCallCenterBusy = "callCenterBusy";
 
+//chat offline
+
+//Đọc badge để hiển thị có tin nhắn mới
+//Khi click vào thì call route xóa
+const _formatRouteNotiNewChat = "chat/notificationNewChat/";
+
+//Sử dụng cho luồng xóa kết nối
+const _formatRouteTempDeleteConnectionOfflineNotUse = "chat/deleteTempOfflineConnectionNotUse/";
+const _prefixConnectionToDelete = "deleteConnection";
+
+//call
 const _prefixCallInfo = "call";
 
+//notification
 const _formatRouteNotification = "notification/";
 const _prefixListenNotification = "listen";
 const _prefixActionNotification = "action";
@@ -296,6 +309,7 @@ $('#btn_logout').click(function () {
     clearBusyCallCenter(chooseUser.configNumber, null);
     closeActiveCalling(chooseUser.configNumber);
     clearListenNotification(chooseUser.departmentId, chooseUser.userId);
+    clearTempDeleteConnection(chooseUser.userId);
     let user = db.ref(_formatRouteLogin + chooseUser.userId);
     user.remove();
 });
@@ -456,6 +470,12 @@ $(document).on('click', '#close', function () {
 });
 //#endregion
 
+//click switch tab "notification" chat
+$('#sp_newnotioffline').click(function () {
+    clearNotificationChatOfflineOnclick();
+    $('#sp_newnotioffline').hide();
+});
+
 //#region browser off
 $(window).bind("beforeunload", function () {
     clearAllStatusWhenLogout();
@@ -463,6 +483,7 @@ $(window).bind("beforeunload", function () {
     clearBusyCallCenter(chooseUser.configNumber, null);
     closeActiveCalling(chooseUser.configNumber);
     clearListenNotification(chooseUser.departmentId, chooseUser.userId);
+    clearTempDeleteConnection(chooseUser.userId);
     let user = db.ref(_formatRouteLogin + chooseUser.userId);
     user.remove();
 });
@@ -651,6 +672,10 @@ function login() {
     if (typeof (chooseUser) !== "undefined" && chooseUser !== null) {
         //Chat info login
         db.ref(`${_formatRouteLogin}${chooseUser.userId}/${_prefixInfoWithUserLogin}`).set(chooseUser);
+        //fetch get new notification offline chat
+        fetchNotificationChatOfflineWhenLogin(chooseUser.userId);
+        //Fetch notification chat for offline
+        fetchTempDeleteConnection(chooseUser.userId);
     }
 }
 
@@ -722,4 +747,46 @@ function clearListenNotification(departmentId, officerId) {
 }
 //------------------------------
 
+//offline chat flow
+function fetchTempDeleteConnection(officerId) {
+    let route = `${_formatRouteTempDeleteConnectionOfflineNotUse}${officerId}/${_prefixConnectionToDelete}`;
+    let fetchData = db.ref(route);
+    fetchData.on("child_added", function (snapshot) {
+        let item = snapshot.val();
+        console.log(item);
+        if (typeof (item) !== "undefined" && item !== null) {
+            //to do 
+            //delete connection
+            $(`#${item.connectionId}`).remove();
+            dictTempConnections.splice($.inArray(item.connectionId, dictTempConnections), 1);
+        }
+    });
+}
+
+function clearTempDeleteConnection(officerId) {
+    let route = `${_formatRouteTempDeleteConnectionOfflineNotUse}${officerId}/${_prefixConnectionToDelete}`;
+    let fetchData = db.ref(route);
+    fetchData.remove();
+}
+
+
+
+function fetchNotificationChatOfflineWhenLogin(officerId) {
+    let route = `${_formatRouteNotiNewChat}${officerId}`;
+    let fetchData = db.ref(route);
+    fetchData.on("child_added", function (snapshot) {
+        let item = snapshot.val();
+        console.log(item);
+        if (typeof (item) !== "undefined" && item !== null) {
+            $('#sp_newnotioffline').show();
+            $("#sp_newnotioffline").pulsate({ color: "#09f" });
+        }
+    });
+}
+
+function clearNotificationChatOfflineOnclick(officerId) {
+    let route = `${_formatRouteNotiNewChat}${officerId}}`;
+    let fetchData = db.ref(route);
+    fetchData.remove();
+}
 //#endregion
