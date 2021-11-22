@@ -472,7 +472,7 @@ $(document).on('click', '#close', function () {
 
 //click switch tab "notification" chat
 $('#sp_newnotioffline').click(function () {
-    clearNotificationChatOfflineOnclick();
+    clearNotificationChatOfflineOnclick(chooseUser.userId);
     $('#sp_newnotioffline').hide();
 });
 
