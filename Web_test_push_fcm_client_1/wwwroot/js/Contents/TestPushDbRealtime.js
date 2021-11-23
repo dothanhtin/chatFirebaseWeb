@@ -59,6 +59,15 @@ let officerCanGioTest = new User(
     "Quản lý Long Hòa Test"
 )
 
+let user228 = new User(
+    "0085deea-4e04-47ea-bdf8-53aa2ae864c1",
+    "tongdai_228.hcm",
+    "8d22727e-2fa8-4627-84c5-e2b36bca5d28",
+    "Local_228",
+    0,
+    "tongdai_228.hcm"
+)
+
 //#endregion
 
 //#region format node
@@ -250,6 +259,45 @@ else if (usercode === "10") {
 }
 else if (usercode === "20") {
     chooseUser = officerCanGioTest;
+    //fetch listen notification
+    initListenNotification(chooseUser.departmentId, chooseUser.userId);
+}
+else if (usercode === "228") {
+    chooseUser = user228;
+    login();
+    connectionWithUserId = _formatRouteConnection + chooseUser.userId + "/";
+    let fetchConnection = db.ref(connectionWithUserId);
+
+    fetchConnection.on("child_added", function (snapshot) {
+        //console.log(snapshot);
+        //console.log(snapshot.val());
+        let item = snapshot.val();
+        //check exist in list
+        var check = dictConnections.get(item.connectionId);
+        if (typeof (check) === "undefined" || check == null) {
+            dictConnections.set(item.connectionId, item);
+        }
+        else
+            $(`#${item.connectionId}`).remove();
+        let eli = `<li id=${item.connectionId} class="list-group-item"
+                    style="background-image: url('${item.avatar}');background-repeat: no-repeat;background-size: contain;text-align:center">
+                    ${item.username}(${item.typeChat})<span class=${item.badge > 0 ? "badge" : "badgeHidden"} style="float: right;color:red">${item.badge}</span>
+                    <span id='close'>x</span></li>`;
+        $('#lst_conn').append(eli);
+    });
+
+    //fetch tempConnection
+    let fetchTempConnection = db.ref(`${_formatRouteLogin}${chooseUser.userId}/${_prefixTempConnectionWithUserLogin}`)
+    fetchTempConnection.on("child_added", function (snapshot) {
+        let item = snapshot.key;
+        if (typeof (item) !== "undefined" && item !== null) {
+            if (typeof dictTempConnections[item] === 'undefined') {
+                dictTempConnections.push(item);
+            }
+        }
+    });
+    //fetch busy call center
+    initFetchCallCenterInfo(chooseUser.configNumber);
     //fetch listen notification
     initListenNotification(chooseUser.departmentId, chooseUser.userId);
 }
@@ -757,8 +805,12 @@ function fetchTempDeleteConnection(officerId) {
         if (typeof (item) !== "undefined" && item !== null) {
             //to do 
             //delete connection
-            $(`#${item.connectionId}`).remove();
-            dictTempConnections.splice($.inArray(item.connectionId, dictTempConnections), 1);
+            //$(`#${item.connectionId}`).hide();
+            //$(`#${item.connectionId}`).remove();
+            //dictTempConnections.splice($.inArray(item.connectionId, dictTempConnections), 1);
+            $(`#${item}`).hide();
+            $(`#${item}`).remove();
+            dictTempConnections.splice($.inArray(item, dictTempConnections), 1);
         }
     });
 }
@@ -785,7 +837,7 @@ function fetchNotificationChatOfflineWhenLogin(officerId) {
 }
 
 function clearNotificationChatOfflineOnclick(officerId) {
-    let route = `${_formatRouteNotiNewChat}${officerId}}`;
+    let route = `${_formatRouteNotiNewChat}${officerId}`;
     let fetchData = db.ref(route);
     fetchData.remove();
 }
