@@ -518,9 +518,11 @@ $(document).on('click', '#close', function () {
 });
 //#endregion
 
-//click switch tab "notification" chat
+//click switch icon "notification" chat to get into chat page
 $('#sp_newnotioffline').click(function () {
     clearNotificationChatOfflineOnclick(chooseUser.userId);
+    //stop listen when go to chat page
+    switchListenChatNotification("ChatPage", chooseUser.userId);
     $('#sp_newnotioffline').hide();
 });
 
@@ -721,7 +723,8 @@ function login() {
         //Chat info login
         db.ref(`${_formatRouteLogin}${chooseUser.userId}/${_prefixInfoWithUserLogin}`).set(chooseUser);
         //fetch get new notification offline chat
-        fetchNotificationChatOfflineWhenLogin(chooseUser.userId);
+        let routeNotificationChatOffline = `${_formatRouteNotiNewChat}${chooseUser.userId}`;
+        fetchNotificationChatOfflineWhenLogin(routeNotificationChatOffline);
         //Fetch notification chat for offline
         fetchTempDeleteConnection(chooseUser.userId);
     }
@@ -805,9 +808,7 @@ function fetchTempDeleteConnection(officerId) {
         if (typeof (item) !== "undefined" && item !== null) {
             //to do 
             //delete connection
-            //$(`#${item.connectionId}`).hide();
-            //$(`#${item.connectionId}`).remove();
-            //dictTempConnections.splice($.inArray(item.connectionId, dictTempConnections), 1);
+            //Xóa trên giao diện và biến lưu trữ connectionId bị xóa
             $(`#${item}`).hide();
             $(`#${item}`).remove();
             dictTempConnections.splice($.inArray(item, dictTempConnections), 1);
@@ -818,13 +819,13 @@ function fetchTempDeleteConnection(officerId) {
 function clearTempDeleteConnection(officerId) {
     let route = `${_formatRouteTempDeleteConnectionOfflineNotUse}${officerId}/${_prefixConnectionToDelete}`;
     let fetchData = db.ref(route);
+    //fetchData.off("child_added");
     fetchData.remove();
 }
 
 
 
-function fetchNotificationChatOfflineWhenLogin(officerId) {
-    let route = `${_formatRouteNotiNewChat}${officerId}`;
+function fetchNotificationChatOfflineWhenLogin(route) {
     let fetchData = db.ref(route);
     fetchData.on("child_added", function (snapshot) {
         let item = snapshot.val();
@@ -840,5 +841,21 @@ function clearNotificationChatOfflineOnclick(officerId) {
     let route = `${_formatRouteNotiNewChat}${officerId}`;
     let fetchData = db.ref(route);
     fetchData.remove();
+}
+
+// Sử dụng nếu ở 1 page khác page chat thì sẽ hiển thị notification trên icon khi có chat mới
+function switchListenChatNotification(idTab, officerId) {
+    var route = `${_formatRouteNotiNewChat}${officerId}`;
+    let fetchData = db.ref(route)
+    if (idTab === "ChatPage") {
+        //stop listen chat notification
+        //to do
+        fetchData.off("child_added");
+    }
+    else {
+        //start listen chat notification
+        //to do
+        fetchNotificationChatOfflineWhenLogin(route);
+    }
 }
 //#endregion
