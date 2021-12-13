@@ -61,16 +61,16 @@
             <select id="sct_typeMessage" class="select-dropdown form-control">
                 <option value="op_text" class="mdb-select md-form">Text</option>
                 @*<option value="op_photo" class="mdb-select md-form">Photo</option>
-                <option value="op_video" class="mdb-select md-form">Video</option>
-                <option value="op_link" class="mdb-select md-form">Link</option>
-                <option value="op_button" class="mdb-select md-form">Button</option>*@
+                    <option value="op_video" class="mdb-select md-form">Video</option>
+                    <option value="op_link" class="mdb-select md-form">Link</option>
+                    <option value="op_button" class="mdb-select md-form">Button</option>*@
             </select>
         </div>
     </div>
     <div class="row">
         <div class="col-12" style="display:inline-block">
             <label class="lbl">Message Forward:</label>
-            </br>
+            <br />
             <input type="text" id="messageInputFw" class="form-control" style="display:inline-block;width:74%"
                    placeholder="Send message from Zalo,FB,LiveChat,..." />
             <button type="button" id="sendButtonFw" style="display:inline-block"
@@ -83,22 +83,24 @@
         <div class="row">
             <div class="col-md-4">
                 <label class="lbl">List Chat <span id="sp_newnotioffline" style="display:none">(Thông báo mới)</span></label>
-                </br>
+                <br />
                 <ul id="lst_conn" class="list-group">
                     @*<li class="list-group-item active">Cras justo odio</li>
-                    <li class="list-group-item">Dapibus ac facilisis in</li>*@
+                        <li class="list-group-item">Dapibus ac facilisis in</li>*@
                 </ul>
             </div>
             <div class="col-md-8" style="display:inline-block;">
                 <label class="lbl">Chat Window</label>
-                </br>
+                <label id="lbl_anotherpage">Another page</label>
+                <label id="lbl_chatpage" style="display:none">Chat page</label>
+                <br />
                 <div id="chat" style="padding:0;">
                     <!-- messages will display here -->
                     <ul id="messages" class="modal-content"></ul>
-                    </br>
+                    <br />
                     <!-- form to send message -->
-                        <input id="message-input" type="text" class="form-control" style="width:74%;display:inline-block" placeholder="Type backward message here..." />
-                        <button id="message-btn" type="button" class="btn btn-primary waves-effect waves-light">Send</button>
+                    <input id="message-input" type="text" class="form-control" style="width:74%;display:inline-block" placeholder="Type backward message here..." />
+                    <button id="message-btn" type="button" class="btn btn-primary waves-effect waves-light">Send</button>
                 </div>
             </div>
         </div>

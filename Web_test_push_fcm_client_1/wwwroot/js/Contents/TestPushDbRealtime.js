@@ -98,6 +98,7 @@ const _formatRouteNotification = "notification/";
 const _prefixListenNotification = "listen";
 const _prefixActionNotification = "action";
 const _prefixStatusNotification = "active";
+const _prefixChatCurrentPage = "isChatCurrentPage";
 //#endregion
 
 //#region config of Firebase
@@ -524,6 +525,21 @@ $('#sp_newnotioffline').click(function () {
     //stop listen when go to chat page
     switchListenChatNotification("ChatPage", chooseUser.userId);
     $('#sp_newnotioffline').hide();
+    $('#lbl_anotherpage').show();
+    $('#lbl_chatpage').hide();
+});
+
+//click on label page
+$('#lbl_anotherpage').click(function () {
+    updateUsingCurrentPage(chooseUser.userId, false);
+    $('#lbl_chatpage').show();
+    $('#lbl_anotherpage').hide();
+});
+
+$('#lbl_chatpage').click(function () {
+    updateUsingCurrentPage(chooseUser.userId, true);
+    $('#lbl_chatpage').hide();
+    $('#lbl_anotherpage').show();
 });
 
 //#region browser off
@@ -845,17 +861,30 @@ function clearNotificationChatOfflineOnclick(officerId) {
 
 // Sử dụng nếu ở 1 page khác page chat thì sẽ hiển thị notification trên icon khi có chat mới
 function switchListenChatNotification(idTab, officerId) {
+    let isChatPage = false;
     var route = `${_formatRouteNotiNewChat}${officerId}`;
-    let fetchData = db.ref(route)
+    let fetchData = db.ref(route);
     if (idTab === "ChatPage") {
         //stop listen chat notification
         //to do
         fetchData.off("child_added");
+        isChatPage = true;
+        updateUsingCurrentPage(officerId, isChatPage);
     }
     else {
         //start listen chat notification
         //to do
         fetchNotificationChatOfflineWhenLogin(route);
+        updateUsingCurrentPage(officerId, isChatPage);
     }
+}
+
+//Sử dụng notification cho chat page
+function updateUsingCurrentPage(officerId, isChatPage) {
+    let value = { isChatPage: isChatPage };
+    let route = `${_formatRouteNotification}/${_prefixChatCurrentPage}/${officerId}/`;
+    let fetchData = db.ref(route);
+    fetchData.set(value);
+    fetchData.off();
 }
 //#endregion
