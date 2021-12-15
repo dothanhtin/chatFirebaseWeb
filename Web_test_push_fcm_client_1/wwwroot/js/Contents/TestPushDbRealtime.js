@@ -531,13 +531,15 @@ $('#sp_newnotioffline').click(function () {
 
 //click on label page
 $('#lbl_anotherpage').click(function () {
-    updateUsingCurrentPage(chooseUser.userId, false);
+    //updateUsingCurrentPage(chooseUser.userId, false);
+    switchListenChatNotification("Another Page", chooseUser.userId);
     $('#lbl_chatpage').show();
     $('#lbl_anotherpage').hide();
 });
 
 $('#lbl_chatpage').click(function () {
-    updateUsingCurrentPage(chooseUser.userId, true);
+    /*updateUsingCurrentPage(chooseUser.userId, true);*/
+    switchListenChatNotification("ChatPage", chooseUser.userId);
     $('#lbl_chatpage').hide();
     $('#lbl_anotherpage').show();
 });
