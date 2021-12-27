@@ -1,5 +1,6 @@
 ﻿import User, { MessageForward } from './Models/Classes.js';
 import { MessageBackward } from './Models/Classes.js';
+
 //import '/js/Models/Classes.js';
 //#region init and constant
 
@@ -118,6 +119,18 @@ firebase.initializeApp(firebaseConfig);
 
 // initialize database
 const db = firebase.database();
+
+firebase.auth().createUserWithEmailAndPassword('bthuancan@gmail.com', '123456Aa@')
+    .then((userCredential) => {
+        // Signed in 
+        var user = userCredential.user;
+        // ...
+    })
+    .catch((error) => {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // ..
+    });
 
 //#endregion
 
