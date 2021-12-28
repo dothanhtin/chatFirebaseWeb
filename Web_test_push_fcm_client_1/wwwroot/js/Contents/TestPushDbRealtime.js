@@ -119,18 +119,20 @@ firebase.initializeApp(firebaseConfig);
 
 // initialize database
 const db = firebase.database();
-
-firebase.auth().createUserWithEmailAndPassword('bthuancan@gmail.com', '123456Aa@')
+let uid = '';
+//#region authorize firebase
+firebase.auth().signInWithEmailAndPassword('bthuancan@gmail.com', '123456Aa@') //read from config
     .then((userCredential) => {
-        // Signed in 
-        var user = userCredential.user;
+        // Signed in
+        //var user = userCredential.user;
+        //console.log(user);
         // ...
     })
     .catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
-        // ..
     });
+//#endregion
 
 //#endregion
 
@@ -374,6 +376,8 @@ $('#btn_logout').click(function () {
     clearTempDeleteConnection(chooseUser.userId);
     let user = db.ref(_formatRouteLogin + chooseUser.userId);
     user.remove();
+    //add logout firebase
+    logoutFirebase();
 });
 
 $('#sendButtonFw').click(function () {
@@ -567,6 +571,8 @@ $(window).bind("beforeunload", function () {
     clearTempDeleteConnection(chooseUser.userId);
     let user = db.ref(_formatRouteLogin + chooseUser.userId);
     user.remove();
+    //add logout firebase
+    logoutFirebase();
 });
 //#endregion
 
@@ -903,3 +909,12 @@ function updateUsingCurrentPage(officerId, isChatPage) {
     fetchData.off();
 }
 //#endregion
+
+function logoutFirebase() {
+    firebase.auth().signOut().then(() => {
+        // Sign-out successful.
+    }).catch((error) => {
+        // An error happened.
+        console.log(error);
+    });
+}
